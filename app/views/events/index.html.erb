@@ -1,0 +1,36 @@
+<div class="container">
+  <h1 class="my-4">Events</h1>
+
+  <!-- Search Form -->
+  <%= form_tag(events_path, method: :get, class: "form-inline mb-4") do %>
+    <div class="input-group">
+      <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "Search by title or location" %>
+      <div class="input-group-append">
+        <%= submit_tag "Search", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Event Cards -->
+  <div class="row">
+    <% @events.each do |event| %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <% if event.banner.present? %>
+            <%= image_tag event.banner.url, class: "card-img-top", alt: "Event Banner" %>
+          <% end %>
+          <div class="card-body">
+            <h5 class="card-title"><%= event.title %></h5>
+            <p class="card-text"><%= truncate(event.description, length: 100) %></p>
+            <ul class="list-unstyled">
+              <li><strong>Date:</strong> <%= event.date.strftime('%B %d, %Y') %></li>
+              <li><strong>Location:</strong> <%= event.location %></li>
+              <li><strong>Capacity:</strong> <%= event.capacity %></li> <!-- Add capacity here -->
+            </ul>
+            <%= link_to "View Details", event_path(event), class: "btn btn-primary btn-sm" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

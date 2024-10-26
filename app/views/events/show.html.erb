@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card mt-5">
+        <div class="card-body">
+          <h1 class="card-title"><%= @event.title %></h1>
+          <p class="card-text"><%= @event.description %></p>
+          <p><strong>Date:</strong> <%= @event.date.strftime('%B %d, %Y') %></p>
+          <p><strong>Location:</strong> <%= @event.location %></p>
+          <p><strong>Capacity:</strong> <%= @event.capacity %></p>
+
+          <% if user_signed_in? %>
+            <% if current_user.admin? %>
+              <p class="text-muted">You are logged in as an admin.</p>
+            <% else %>
+              <% if current_user.rsvped_to?(@event) %>
+                <%= button_to 'Cancel RSVP', cancel_rsvp_event_path(@event), method: :delete, class: 'btn btn-danger' %>
+              <% else %>
+                <%= button_to 'RSVP', rsvp_event_path(@event), method: :post, class: 'btn btn-primary' %>
+              <% end %>
+            <% end %>
+          <% else %>
+            <%= link_to 'Login to RSVP', new_user_session_path, class: 'btn btn-primary' %>
+          <% end %>
+
+          <hr>
+
+          <!-- Display existing comments -->
+          <% @comments.each do |comment| %>
+            <div class="card mt-3">
+              <div class="card-body">
+                <p class="card-text"><strong><%= comment.user.email %>:</strong> <%= comment.body %></p>
+                <p class="card-text"><em>Posted <%= time_ago_in_words(comment.created_at) %> ago</em></p>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Form for new comment -->
+          <div class="card mt-3">
+            <div class="card-body">
+              <%= render 'comments/form', comment: @comment %>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Display guest list -->
+          <h2 class="mt-4">Guest List</h2>
+          <% if @attendees.any? %>
+            <ul class="list-group">
+              <% @attendees.each do |attendee| %>
+                <li class="list-group-item">
+                  <%= attendee.user.email %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p>No guests have RSVP'd yet.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
